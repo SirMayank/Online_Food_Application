@@ -1,0 +1,38 @@
+<div style="min-height:72vh">
+  <h1>Dishes</h1>
+  <% if @restaurant.user == current_user %>
+    <h1><%= link_to "Add dish", new_restaurant_food_path, class: "btn btn-success" %></h1>
+  <% end %>
+  <h1> 
+    <% @foods.each do |food| %>
+      <div class="card" style="width: 20rem; display:inline-block;">
+        <% if food.images.present? %>
+          <% food.images.each do |img| %>
+            <%= image_tag url_for(img), class: "card-img-top", style: "width: 20rem" %><br>
+          <% end %>
+        <% end %>
+        <div class="card-block">
+          <% if @restaurant.user == current_user %>
+            <div class="d-flex justify-content-around align-items-center">
+              <%= link_to "Edit Food", edit_restaurant_food_path(@restaurant,food), class:"btn btn-primary btn-sm" %>
+              <%= button_to "delete", restaurant_food_path(@restaurant, food), method: "delete", class:"btn btn-primary btn-sm" %>
+            </div>
+            <h4 class="card-title"><%= food.name %><br></h4>
+            <h4 class="card-title"><%= food.price %><br></h4>  
+          <% else %>
+            <h4 class="card-title"><%= food.name %><br></h4>
+            <h4 class="card-title"><%= food.price %><br></h4>
+          <% end %>
+          <% if @current_cart.cart_items.pluck(:food_id).include?(food.id) %>
+              <% @current_cart.cart_items.each do |cart_item| %>
+                <%= link_to "Remove from cart", cart_item_path(cart_item), method: :delete, class:"btn btn-sm btn-primary" %>
+                <% break %>
+              <% end %>
+          <% else %>
+            <%= button_to "Add #{food.name} to cart", cart_items_path(:food_id => food.id), class:"btn btn-primary btn-sm" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </h1>
+</div>
